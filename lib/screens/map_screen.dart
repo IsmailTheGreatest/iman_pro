@@ -1,40 +1,38 @@
 import 'dart:async';
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
+import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:yandex_mapkit/yandex_mapkit.dart';
-import 'app_lat_long.dart';
-import 'app_location.dart';
+import '../bloc/map_bloc.dart';
+import '../models/app_lat_long.dart';
+import '../services/app_location.dart';
 
-class MapScreen extends StatefulWidget {
+class MapScreen extends StatelessWidget {
   const MapScreen({super.key});
 
   @override
-  State<MapScreen> createState() => _MapScreenState();
+  Widget build(BuildContext context) {
+    return BlocProvider(
+      create: (_) => MapBloc(),
+      child: MapView(),
+    );
+  }
 }
 
-class _MapScreenState extends State<MapScreen> {
+class MapView extends StatelessWidget {
   final mapControllerCompleter = Completer<YandexMapController>();
-  PlacemarkMapObject? userLocationPlacemark;
-  final List<PlacemarkMapObject> placemarks = [];
   final Map<String, bool> placemarkToggles = {};
-  bool isOverlayVisible = false;
 
-  @override
-  void initState() {
-    super.initState();
-    _initPermission().ignore();
-    _loadMapStyle();
-    _initializePlacemarks();
-  }
+  MapView({super.key});
 
-  Future<void> _loadMapStyle() async {
-    final controller = await mapControllerCompleter.future;
+  Future<void> _loadMapStyle(YandexMapController controller) async {
     final styleJson = await rootBundle.loadString('assets/map_style.json');
     controller.setMapStyle(styleJson);
   }
 
-  Future<void> _moveToCurrentLocation(AppLatLong appLatLong) async {
-    (await mapControllerCompleter.future).moveCamera(
+  Future<void> _moveToCurrentLocation(
+      YandexMapController controller, AppLatLong appLatLong) async {
+    controller.moveCamera(
       animation: const MapAnimation(type: MapAnimationType.linear, duration: 1),
       CameraUpdate.newCameraPosition(
         CameraPosition(
@@ -48,28 +46,7 @@ class _MapScreenState extends State<MapScreen> {
     );
   }
 
-  void _addUserLocationPlacemark(AppLatLong location) {
-    setState(() {
-      userLocationPlacemark = PlacemarkMapObject(
-        opacity: 0.9,
-        mapId: const MapObjectId('user_location'),
-        point: Point(latitude: location.lat, longitude: location.long),
-        icon: PlacemarkIcon.single(PlacemarkIconStyle(
-          image: BitmapDescriptor.fromAssetImage('assets/current.png'),
-          scale: 0.5,
-        )),
-      );
-    });
-  }
-
-  Future<void> _initPermission() async {
-    if (!await LocationService().checkPermission()) {
-      await LocationService().requestPermission();
-    }
-    await _fetchCurrentLocation();
-  }
-
-  Future<void> _fetchCurrentLocation() async {
+  Future<void> _fetchCurrentLocation(BuildContext context) async {
     AppLatLong location;
     const defLocation = TashkentLocation();
     try {
@@ -77,27 +54,26 @@ class _MapScreenState extends State<MapScreen> {
     } catch (_) {
       location = defLocation;
     }
-    _moveToCurrentLocation(location);
-    _addUserLocationPlacemark(location);
+    final controller = await mapControllerCompleter.future;
+    _moveToCurrentLocation(controller, location);
+    _addUserLocationPlacemark(context, location);
   }
 
-  void updatePlacemarkIcon(String mapObjectId, String newIconPath) {
-    setState(() {
-      final index = placemarks
-          .indexWhere((placemark) => placemark.mapId.value == mapObjectId);
-      if (index != -1) {
-        placemarks[index] = placemarks[index].copyWith(
-          icon: PlacemarkIcon.single(PlacemarkIconStyle(
-            image: BitmapDescriptor.fromAssetImage(newIconPath),
-            scale: 0.7,
-          )),
-        );
-      }
-    });
+  void _addUserLocationPlacemark(BuildContext context, AppLatLong location) {
+    final userLocationPlacemark = PlacemarkMapObject(
+      opacity: 0.9,
+      mapId: const MapObjectId('user_location'),
+      point: Point(latitude: location.lat, longitude: location.long),
+      icon: PlacemarkIcon.single(PlacemarkIconStyle(
+        image: BitmapDescriptor.fromAssetImage('assets/current.png'),
+        scale: 0.5,
+      )),
+    );
+    context.read<MapBloc>().add(InitializePlacemarks([userLocationPlacemark]));
   }
 
-  void _initializePlacemarks() {
-    placemarks.addAll([
+  void _initializePlacemarks(BuildContext context) {
+    final placemarks = [
       PlacemarkMapObject(
         opacity: 0.8,
         mapId: const MapObjectId('idea'),
@@ -119,7 +95,7 @@ class _MapScreenState extends State<MapScreen> {
           scale: 0.7,
         )),
       ),
-    ]);
+    ];
 
     // Initialize toggle states
     placemarkToggles['idea'] = false;
@@ -132,11 +108,11 @@ class _MapScreenState extends State<MapScreen> {
         final newIconPath = isSelected
             ? 'assets/idea_unselected.png'
             : 'assets/idea_selected.png';
-        updatePlacemarkIcon(self.mapId.value, newIconPath);
+        context
+            .read<MapBloc>()
+            .add(UpdatePlacemarkIcon(self.mapId.value, newIconPath));
         placemarkToggles[self.mapId.value] = !isSelected;
-        setState(() {
-          isOverlayVisible = !isOverlayVisible;
-        });
+        context.read<MapBloc>().add(ToggleOverlayVisibility());
       },
     );
 
@@ -145,147 +121,156 @@ class _MapScreenState extends State<MapScreen> {
         final isSelected = placemarkToggles[self.mapId.value] ?? false;
         final newIconPath =
             isSelected ? 'assets/ccccc.png' : 'assets/texnomart_selected.png';
-        updatePlacemarkIcon(self.mapId.value, newIconPath);
+        context
+            .read<MapBloc>()
+            .add(UpdatePlacemarkIcon(self.mapId.value, newIconPath));
         placemarkToggles[self.mapId.value] = !isSelected;
-        setState(() {
-          isOverlayVisible = !isOverlayVisible;
-        });
+        context.read<MapBloc>().add(ToggleOverlayVisibility());
       },
     );
+
+    context.read<MapBloc>().add(InitializePlacemarks(placemarks));
   }
 
   @override
   Widget build(BuildContext context) {
-    return MaterialApp(
-      debugShowCheckedModeBanner: false,
-      home: Scaffold(
-        body: Stack(
-          children: [
-            YandexMap(
-              logoAlignment: const MapAlignment(
-                  horizontal: HorizontalAlignment.center,
-                  vertical: VerticalAlignment.top),
-              mapType: MapType.vector,
-              mapObjects: [
-                if (userLocationPlacemark != null) userLocationPlacemark!,
-                ...placemarks,
-              ],
-              onMapCreated: (controller) {
-                mapControllerCompleter.complete(controller);
-              },
-            ),
-            Positioned(
-                top: 53,
-                left: 20,
-                child: GestureDetector(
-                  onTap: () {
-                    Navigator.pop(context);
+    return BlocBuilder<MapBloc, MapState>(
+      builder: (context, state) {
+        return MaterialApp(
+          debugShowCheckedModeBanner: false,
+          home: Scaffold(
+            body: Stack(
+              children: [
+                YandexMap(
+                  logoAlignment: const MapAlignment(
+                      horizontal: HorizontalAlignment.center,
+                      vertical: VerticalAlignment.top),
+                  mapType: MapType.vector,
+                  mapObjects: state.placemarks,
+                  onMapCreated: (controller) async {
+                    mapControllerCompleter.complete(controller);
+                    _initializePlacemarks(context);
+
+                    _loadMapStyle(controller);
+                    _fetchCurrentLocation(context);
                   },
-                  child: Container(
-                    width: 50,
-                    height: 50,
-                    decoration: BoxDecoration(
-                      borderRadius: BorderRadius.circular(16),
-                      color: Colors.white,
-                      boxShadow: [
-                        BoxShadow(
-                          color: const Color(0xff040415).withOpacity(0.1),
-                          blurRadius: 15,
-                          offset: const Offset(0, 3),
+                ),
+                Positioned(
+                    top: 53,
+                    left: 20,
+                    child: GestureDetector(
+                      onTap: () {
+                        Navigator.pop(context);
+                      },
+                      child: Container(
+                        width: 50,
+                        height: 50,
+                        decoration: BoxDecoration(
+                          borderRadius: BorderRadius.circular(16),
+                          color: Colors.white,
+                          boxShadow: [
+                            BoxShadow(
+                              color: const Color(0xff040415).withOpacity(0.1),
+                              blurRadius: 15,
+                              offset: const Offset(0, 3),
+                            ),
+                          ],
                         ),
+                        child: const Icon(Icons.arrow_back),
+                      ),
+                    )),
+                Positioned(
+                    top: 53,
+                    right: 20,
+                    child: GestureDetector(
+                      child: Container(
+                        width: 50,
+                        height: 50,
+                        decoration: BoxDecoration(
+                          borderRadius: BorderRadius.circular(16),
+                          color: Colors.white,
+                          boxShadow: [
+                            BoxShadow(
+                              color: const Color(0xff040415).withOpacity(0.1),
+                              blurRadius: 15,
+                              offset: const Offset(0, 3),
+                            ),
+                          ],
+                        ),
+                        child: const Icon(Icons.tune),
+                      ),
+                    )),
+                Positioned(
+                  bottom: 170,
+                  right: 0,
+                  child: GestureDetector(
+                    onTap: () => _fetchCurrentLocation(context),
+                    child: Container(
+                      width: 60,
+                      height: 60,
+                      decoration: const BoxDecoration(
+                        image: DecorationImage(
+                          image: AssetImage('assets/location.png'),
+                          fit: BoxFit.cover,
+                        ),
+                      ),
+                    ),
+                  ),
+                ),
+                const Positioned(
+                  bottom: 10,
+                  left: 0,
+                  right: 0,
+                  child: SingleChildScrollView(
+                    scrollDirection: Axis.horizontal,
+                    child: Row(
+                      children: [
+                        ViewLocation(
+                            imgUrl: "assets/idea.png",
+                            title: "Idea",
+                            address:
+                                "Ташкент, Юнусабадский р-н, ул А. Темура, 43/2",
+                            appLatLong: AppLatLong(
+                                lat: 41.318118727817414,
+                                long: 69.29323833747138),
+                            distance: "1.5 km",
+                            timeToArrive: "10 min"),
+                        ViewLocation(
+                            imgUrl: "assets/texnomart.png",
+                            title: "Texnomart",
+                            address: "Ташкент, Юнусабад 11",
+                            appLatLong: AppLatLong(
+                                lat: 41.318118727817414,
+                                long: 69.29323833747138),
+                            distance: "2.3 km",
+                            timeToArrive: "28 min"),
                       ],
                     ),
-                    child: const Icon(Icons.arrow_back),
                   ),
-                )),
-            Positioned(
-                top: 53,
-                right: 20,
-                child: GestureDetector(
-                  child: Container(
-                    width: 50,
-                    height: 50,
-                    decoration: BoxDecoration(
-                      borderRadius: BorderRadius.circular(16),
-                      color: Colors.white,
-                      boxShadow: [
-                        BoxShadow(
-                          color: const Color(0xff040415).withOpacity(0.1),
-                          blurRadius: 15,
-                          offset: const Offset(0, 3),
-                        ),
-                      ],
-                    ),
-                    child: const Icon(Icons.tune),
-                  ),
-                )),
-            Positioned(
-              bottom: 170,
-              right: 0,
-              child: GestureDetector(
-                onTap: _fetchCurrentLocation,
-                child: Container(
-                  width: 60,
-                  height: 60,
-                  decoration: const BoxDecoration(
-                    image: DecorationImage(
-                      image: AssetImage('assets/location.png'),
-                      fit: BoxFit.cover,
+                ),
+                AnimatedPositioned(
+                  duration: const Duration(milliseconds: 300),
+                  bottom: state.isOverlayVisible ? 0 : -350,
+                  left: 0,
+                  curve: Curves.easeInToLinear,
+                  right: 0,
+                  child: const BottomDetailsOverlay(
+                    viewLocation: ViewLocation(
+                      imgUrl: "assets/idea.png",
+                      title: "Idea",
+                      address: "Ташкент, Юнусабадский р-н, ул А. Темура, 43/2",
+                      appLatLong: AppLatLong(
+                          lat: 41.318118727817414, long: 69.29323833747138),
+                      distance: "1.5 km",
+                      timeToArrive: "10 min",
                     ),
                   ),
                 ),
-              ),
+              ],
             ),
-            const Positioned(
-              bottom: 10,
-              left: 0,
-              right: 0,
-              child: SingleChildScrollView(
-                scrollDirection: Axis.horizontal,
-                child: Row(
-                  children: [
-                    ViewLocation(
-                        imgUrl: "assets/idea.png",
-                        title: "Idea",
-                        address:
-                            "Ташкент, Юнусабадский р-н, ул А. Темура, 43/2",
-                        appLatLong: AppLatLong(
-                            lat: 41.318118727817414, long: 69.29323833747138),
-                        distance: "1.5 km",
-                        timeToArrive: "10 min"),
-                    ViewLocation(
-                        imgUrl: "assets/texnomart.png",
-                        title: "Texnomart",
-                        address: "Ташкент, Юнусабад 11",
-                        appLatLong: AppLatLong(
-                            lat: 41.318118727817414, long: 69.29323833747138),
-                        distance: "2.3 km",
-                        timeToArrive: "28 min"),
-                  ],
-                ),
-              ),
-            ),
-            AnimatedPositioned(
-              duration: const Duration(milliseconds: 300),
-              bottom: isOverlayVisible ? 0 : -350,
-              left: 0,
-              curve: Curves.easeInToLinear,
-              right: 0,
-              child: const BottomDetailsOverlay(
-                viewLocation: ViewLocation(
-                  imgUrl: "assets/idea.png",
-                  title: "Idea",
-                  address: "Ташкент, Юнусабадский р-н, ул А. Темура, 43/2",
-                  appLatLong: AppLatLong(
-                      lat: 41.318118727817414, long: 69.29323833747138),
-                  distance: "1.5 km",
-                  timeToArrive: "10 min",
-                ),
-              ),
-            ),
-          ],
-        ),
-      ),
+          ),
+        );
+      },
     );
   }
 }
@@ -392,7 +377,6 @@ class ViewLocation extends StatelessWidget {
               GestureDetector(
                 onTap: () {
                   // Open details screen
-
                 },
                 child: Container(
                   margin: const EdgeInsets.only(top: 10),
@@ -484,7 +468,6 @@ class BottomDetailsOverlay extends StatelessWidget {
       child: Column(
         children: [
           Row(
-
             crossAxisAlignment: CrossAxisAlignment.start,
             children: [
               Container(
@@ -509,7 +492,6 @@ class BottomDetailsOverlay extends StatelessWidget {
                   crossAxisAlignment: CrossAxisAlignment.start,
                   children: [
                     SizedBox(
-
                       child: Text(
                         viewLocation.title,
                         style: const TextStyle(
@@ -519,10 +501,9 @@ class BottomDetailsOverlay extends StatelessWidget {
                         ),
                       ),
                     ),
-                   const  SizedBox(
-
+                    const SizedBox(
                       height: 20,
-                      child:  Text(
+                      child: Text(
                         "Магазин электроники\n",
                         style: TextStyle(
                           overflow: TextOverflow.visible,
@@ -531,26 +512,26 @@ class BottomDetailsOverlay extends StatelessWidget {
                         ),
                       ),
                     ),
-                  const  Text("Другие филиалы",
-                    style: TextStyle(
-                      fontSize: 13,
-                      color:  Color(0xff4059E6),
-                    )),
+                    const Text("Другие филиалы",
+                        style: TextStyle(
+                          fontSize: 13,
+                          color: Color(0xff4059E6),
+                        )),
                   ],
                 ),
               ),
               const Spacer(),
               Container(
-                margin: const EdgeInsets.only(top: 10,right: 5),
+                margin: const EdgeInsets.only(top: 10, right: 5),
                 height: 50,
                 width: 50,
                 decoration: const BoxDecoration(
-                  color:  Color(0xfff4f4f5),
+                  color: Color(0xfff4f4f5),
                   shape: BoxShape.circle,
                 ),
                 child: const Icon(
                   Icons.location_on_outlined,
-                  color:  Color(0xff4059E6),
+                  color: Color(0xff4059E6),
                 ),
               ),
             ],
@@ -571,7 +552,7 @@ class BottomDetailsOverlay extends StatelessWidget {
                       const EdgeInsets.symmetric(horizontal: 10, vertical: 10),
                   decoration: const BoxDecoration(
                     shape: BoxShape.circle,
-                    color:  Color(0xffF4F4F5),
+                    color: Color(0xffF4F4F5),
                   ),
                   child: const Icon(
                     Icons.location_on,
@@ -599,9 +580,9 @@ class BottomDetailsOverlay extends StatelessWidget {
                   margin: const EdgeInsets.only(right: 10),
                   padding:
                       const EdgeInsets.symmetric(horizontal: 10, vertical: 10),
-                  decoration: const  BoxDecoration(
+                  decoration: const BoxDecoration(
                     shape: BoxShape.circle,
-                    color:  Color(0xffF4F4F5),
+                    color: Color(0xffF4F4F5),
                   ),
                   child: const Icon(
                     Icons.phone,
@@ -631,7 +612,7 @@ class BottomDetailsOverlay extends StatelessWidget {
                       const EdgeInsets.symmetric(horizontal: 10, vertical: 10),
                   decoration: const BoxDecoration(
                     shape: BoxShape.circle,
-                    color:  Color(0xffF4F4F5),
+                    color: Color(0xffF4F4F5),
                   ),
                   child: const Icon(
                     Icons.access_time_filled_rounded,
@@ -642,7 +623,7 @@ class BottomDetailsOverlay extends StatelessWidget {
                   width: MediaQuery.of(context).size.width - 120,
                   child: const Text(
                     "пн-пт 10:00-21:00, сб-вс 10:00-20:00",
-                    style:  TextStyle(
+                    style: TextStyle(
                       fontSize: 14,
                       color: Color(0xff040405),
                     ),
@@ -656,4 +637,3 @@ class BottomDetailsOverlay extends StatelessWidget {
     );
   }
 }
-
