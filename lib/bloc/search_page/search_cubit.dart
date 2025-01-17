@@ -1,11 +1,7 @@
-import 'package:bloc/bloc.dart';
 
-class SearchState {
-  final int? selectedCategoryIndex;
-  final String? selectedCategory;
+import 'package:flutter_bloc/flutter_bloc.dart';
+import 'package:iman_invest/bloc/search_page/state/state.dart';
 
-  SearchState({this.selectedCategoryIndex, this.selectedCategory});
-}
 
 class SearchCubit extends Cubit<SearchState> {
   SearchCubit() : super(SearchState());
