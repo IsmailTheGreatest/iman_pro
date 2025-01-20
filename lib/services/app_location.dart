@@ -1,6 +1,7 @@
 import 'package:geolocator/geolocator.dart';
 
-import '../models/app_lat_long.dart';
+import '../feature/shop/domain/entities/app_lat_long.dart';
+
 
 abstract class AppLocation {
   Future<AppLatLong> getCurrentLocation();

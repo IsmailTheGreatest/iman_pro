@@ -2,7 +2,7 @@
 import 'dart:async';
 import 'package:flutter/services.dart';
 import 'package:yandex_mapkit/yandex_mapkit.dart';
-import '../models/app_lat_long.dart';
+import '../feature/shop/domain/entities/app_lat_long.dart';
 import '../services/app_location.dart';
 
 class MapService {
