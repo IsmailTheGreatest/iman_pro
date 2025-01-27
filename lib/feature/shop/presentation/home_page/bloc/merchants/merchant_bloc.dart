@@ -1,5 +1,4 @@
 import 'package:flutter_bloc/flutter_bloc.dart';
-import 'package:iman_invest/core/usecase/usecase.dart';
 import 'package:iman_invest/feature/shop/domain/usecases/get_sorted_partners_usecase.dart';
 import 'package:iman_invest/feature/shop/presentation/home_page/bloc/merchants/merchant_state.dart';
 import 'package:iman_invest/feature/shop/presentation/home_page/bloc/merchants/merchant_event.dart';
