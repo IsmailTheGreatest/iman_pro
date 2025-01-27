@@ -1,9 +1,10 @@
 import 'package:flutter/material.dart';
 
-import '../../../../../core/helper_functions/navigate_without_transition.dart';
+import '../../../../../core/utils/navigate_without_transition.dart';
 import '../../search_page/search_page.dart';
 
 class SearchBarHomePage extends StatelessWidget {
+
   const SearchBarHomePage({
     super.key,
   });
@@ -22,7 +23,7 @@ class SearchBarHomePage extends StatelessWidget {
           readOnly: true,
           enabled: true,
           onTap: () {
-            navigateWithoutTransition(context, const SearchPage());
+            navigateWithoutTransition(context, const  SearchPage());
           },
           textAlignVertical: TextAlignVertical.center,
           decoration: const InputDecoration(

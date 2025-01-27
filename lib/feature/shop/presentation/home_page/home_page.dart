@@ -1,12 +1,19 @@
 import 'package:flutter/material.dart';
-import 'package:flutter_svg/flutter_svg.dart';
+import 'package:flutter_bloc/flutter_bloc.dart';
+import 'package:iman_invest/feature/shop/presentation/home_page/bloc/event.dart';
 import 'package:iman_invest/feature/shop/presentation/home_page/widgets/banner_row/add_banner_row.dart';
 import 'package:iman_invest/feature/shop/presentation/home_page/widgets/banner_row/partners_row.dart';
 import 'package:iman_invest/feature/shop/presentation/home_page/widgets/banner_row/small_partners_row.dart';
 import 'package:iman_invest/feature/shop/presentation/home_page/widgets/category_row_main_page.dart';
-
+import 'package:iman_invest/feature/shop/presentation/home_page/bloc/merchants/merchant_bloc.dart';
+import 'package:iman_invest/feature/shop/presentation/home_page/widgets/top_row_home_page.dart';
 import '../../../../core/widgets/headers/header.dart';
-
+import '../../domain/usecases/get_banner_images_usecase.dart';
+import '../../domain/usecases/get_categories_usecase.dart';
+import '../../domain/usecases/get_partners_usecase.dart';
+import '../../domain/usecases/get_sorted_partners_usecase.dart';
+import 'bloc/homepage_bloc.dart';
+import 'bloc/merchants/merchant_event.dart';
 import 'widgets/search_bar_main_page.dart';
 
 class HomePage extends StatelessWidget {
@@ -14,53 +21,77 @@ class HomePage extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    return Scaffold(
-      backgroundColor: Colors.white,
-      body: SafeArea(
-        child: SingleChildScrollView(
-            child: Column(
-          mainAxisAlignment: MainAxisAlignment.start,
-          crossAxisAlignment: CrossAxisAlignment.start,
-          children: [
-            //magazini and location icon
-            Padding(
-              padding: const EdgeInsets.symmetric(horizontal: 20, vertical: 20),
-              child: Row(
-                mainAxisAlignment: MainAxisAlignment.spaceBetween,
-                children: [
-                  const Text(
-                    "Магазины",
-                    style: TextStyle(fontSize: 26, fontWeight: FontWeight.bold),
-                  ),
-                  SvgPicture.asset(
-                    'assets/icons.svg',
-                    height: 26,
-                    width: 26,
-                  ),
-                ],
-              ),
-            ),
-            const SearchBarHomePage(),
-            const SizedBox(
-              height: 10,
-            ),
-            const AdBannerRow(),
-            const SizedBox(
-              height: 10,
-            ),
-            const CategoryRow(),
-            const Header(
-              title: "Поблизости",
-              size: 24,
-            ),
-            const PartnersRow(),
-            const Header(
-              title: "Вам может понравится",
-              size: 24,
-            ),
-            const SmallPartnersRow(),
-          ],
-        )),
+    return MultiBlocProvider(
+      providers: [
+        BlocProvider<CategoriesBloc>(create: (BuildContext context) {
+          return CategoriesBloc(getCategoriesUseCase: GetCategoriesUseCase());
+        }),
+        BlocProvider(
+          create: (BuildContext context) {
+            return HomePageBloc(
+              getBannerImages: GetBannerImages(),
+              getCategoriesUseCase: GetCategoriesUseCase(),
+            );
+          },
+        ),
+        BlocProvider(create: (BuildContext context) {
+          return SmallMerchantsBloc(
+            getPartnersUseCase: GetPartnersUseCase(),
+          );
+        }),
+        BlocProvider(
+          create: (BuildContext context) {
+            return MerchantBloc(
+              getClosestPartnersUseCase: GetClosestPartnersUseCase(),
+            );
+          },
+        )
+      ],
+      child: Scaffold(
+        backgroundColor: Colors.white,
+        body: SafeArea(
+          child: Builder(builder: (context) {
+            return RefreshIndicator(
+              backgroundColor: const Color(0xfff4f4f5),
+              color: Colors.black87,
+              onRefresh: () async {
+                context.read<HomePageBloc>().add(FetchBannerImages());
+                context.read<CategoriesBloc>().add(FetchCategories());
+                context.read<MerchantBloc>().add(GetPartners());
+                context.read<SmallMerchantsBloc>().add(GetPartnersSmall());
+              },
+              child: const SingleChildScrollView(
+                  physics: AlwaysScrollableScrollPhysics(),
+                  child: Column(
+                    mainAxisAlignment: MainAxisAlignment.start,
+                    crossAxisAlignment: CrossAxisAlignment.start,
+                    children: [
+                      //magazini and location icon
+                      TopRowHomePage(),
+                      SearchBarHomePage(),
+                      SizedBox(
+                        height: 10,
+                      ),
+                      AdBannerRow(),
+                      SizedBox(
+                        height: 10,
+                      ),
+                      CategoryRow(),
+                      Header(
+                        title: "Поблизости",
+                        size: 24,
+                      ),
+                      PartnersRow(),
+                      Header(
+                        title: "Вам может понравится",
+                        size: 24,
+                      ),
+                      SmallPartnersRow(),
+                    ],
+                  )),
+            );
+          }),
+        ),
       ),
     );
   }

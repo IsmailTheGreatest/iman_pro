@@ -5,10 +5,11 @@ class SmallContainer extends StatelessWidget {
     super.key,
     required this.text,
     required this.icon,
-    required this.onTap,
+    required this.onTap, required this.isKm,
   });
 
   final String text;
+  final bool isKm;
   final IconData icon;
   final VoidCallback onTap;
 
@@ -24,13 +25,28 @@ class SmallContainer extends StatelessWidget {
       child: Row(
         children: [
           Transform.scale(scaleY: 0.9, child: Icon(icon, color: Colors.black)),
-          Text(
-            text,
-            style: const TextStyle(
-              fontSize: 13,
-              color: Colors.black,
+          SizedBox(
+            width: 32.8,
+            child: Center(
+              child: Text(
+                text,
+                overflow: TextOverflow.ellipsis,
+                style: const TextStyle(
+                  fontSize: 13,
+                  color: Colors.black,
+                ),
+              ),
             ),
           ),
+           Text(
+              isKm ? 'км' : 'мин',
+              overflow: TextOverflow.ellipsis,
+              style: const TextStyle(
+                fontSize: 13,
+                color: Colors.black,
+              ),
+            )
+           ,
         ],
       ),
     );
