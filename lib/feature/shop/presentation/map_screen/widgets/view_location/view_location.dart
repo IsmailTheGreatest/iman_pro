@@ -1,26 +1,18 @@
 import 'package:flutter/material.dart';
 
 
-import '../../../../domain/entities/app_lat_long.dart';
+import '../../../../data/models/merchant.dart';
+import '../overlays/bottom_overlay.dart';
 import '../small_container/small_container.dart';
 
 
 class ViewLocation extends StatelessWidget {
-  final String imgUrl;
-  final String title;
-  final String distance;
-  final String timeToArrive;
-  final String address;
-  final AppLatLong appLatLong;
+  final Merchant merchant;
+
 
   const ViewLocation(
       {super.key,
-        required this.imgUrl,
-        required this.title,
-        required this.address,
-        required this.appLatLong,
-        required this.distance,
-        required this.timeToArrive});
+       required this.merchant});
 
   @override
   Widget build(BuildContext context) {
@@ -46,17 +38,37 @@ class ViewLocation extends StatelessWidget {
           Row(
             crossAxisAlignment: CrossAxisAlignment.start,
             children: [
-              Container(
-                width: 68,
-                height: 68,
-                decoration: BoxDecoration(
-                  borderRadius: const BorderRadius.only(
-                    bottomLeft: Radius.circular(10),
-                    topLeft: Radius.circular(10),
+              Visibility(
+                visible: merchant.logo.isNotEmpty,
+                child: Container(
+                  width: 68,
+                  height: 68,
+                  decoration: BoxDecoration(
+
+                    borderRadius:  BorderRadius.circular(10),
+                    color: const Color(0xff4059E6).withOpacity(0.1),
+                    image: DecorationImage(
+                      image: NetworkImage(merchant.logo),
+                      fit: BoxFit.contain,
+                    ),
                   ),
-                  image: DecorationImage(
-                    image: AssetImage(imgUrl),
-                    fit: BoxFit.cover,
+                ),
+              ),
+              Visibility(
+                visible: merchant.logo.isEmpty,
+                child: Container(
+                  width: 68,
+                  height: 68,
+                  decoration: BoxDecoration(
+
+                    borderRadius:  BorderRadius.circular(10),
+                    color: const Color(0xff4059E6).withOpacity(0.1),
+
+                  ),
+                  child: const Icon(
+                    Icons.store,
+                    color: Color(0xff4059E6),
+                    size: 40,
                   ),
                 ),
               ),
@@ -70,7 +82,7 @@ class ViewLocation extends StatelessWidget {
                     SizedBox(
                       width: width - 172,
                       child: Text(
-                        title,
+                        merchant.name,
                         style: const TextStyle(
                           overflow: TextOverflow.ellipsis,
                           fontSize: 16,
@@ -82,9 +94,9 @@ class ViewLocation extends StatelessWidget {
                       width: width - 173,
                       height: 38,
                       child: Text(
-                        address,
+                        merchant.address.address,
                         style: const TextStyle(
-                          overflow: TextOverflow.visible,
+                          overflow: TextOverflow.fade,
                           fontSize: 13,
                           color: Color(0xff74747b),
                         ),
@@ -98,14 +110,17 @@ class ViewLocation extends StatelessWidget {
           Row(
             children: [
               SmallContainer(
-                  text: distance, icon: Icons.location_on, onTap: () {}),
+                isKm: true,
+                  text: (merchant.address.distance).toStringAsFixed(1), icon: Icons.location_on, onTap: () {}),
               SmallContainer(
-                  text: timeToArrive,
+                  isKm: false,
+                  text: (merchant.address.distance*10).toStringAsFixed(1),
                   icon: Icons.directions_walk,
                   onTap: () {}),
               const Spacer(),
               GestureDetector(
                 onTap: () {
+                  showBottomOverlay(context, merchant);
                   // Open details screen
                 },
                 child: Container(

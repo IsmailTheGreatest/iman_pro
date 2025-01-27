@@ -1,12 +1,11 @@
 import 'package:flutter/material.dart';
-
+import 'package:flutter_dotenv/flutter_dotenv.dart';
 import 'feature/shop/presentation/home_page/home_page.dart';
 
-
-void main() {
+Future<void> main() async {
+  await dotenv.load(fileName: ".env");
   runApp(const MainPage());
 }
-
 
 class MainPage extends StatelessWidget {
   const MainPage({super.key});

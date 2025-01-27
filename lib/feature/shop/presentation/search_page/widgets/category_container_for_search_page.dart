@@ -22,19 +22,40 @@ class CategoryContainer extends StatelessWidget {
         child: Column(
           crossAxisAlignment: CrossAxisAlignment.center,
           children: [
-            Container(
-              padding: const EdgeInsets.symmetric(horizontal: 5, vertical: 5),
-              decoration: BoxDecoration(
-                color: const Color(0xffF4F4F5),
-                borderRadius: BorderRadius.circular(18),
-                border: isSelected
-                    ? Border.all(color: const Color(0xff4059E6), width: 1)
-                    : Border.all(color: Colors.transparent, width: 1),
+            Visibility(
+              visible: urlStringImage.isEmpty,
+              child: Container(
+                padding: const EdgeInsets.symmetric(horizontal: 5, vertical: 5),
+                decoration: BoxDecoration(
+                  color: const Color(0xffF4F4F5),
+                  borderRadius: BorderRadius.circular(18),
+                  border: isSelected
+                      ? Border.all(color: const Color(0xff4059E6), width: 1)
+                      : Border.all(color: Colors.transparent, width: 1),
+                ),
+                child: const  Icon(
+                  Icons.store,
+                  size: 50,
+                  color: Colors.black,
+                ),
               ),
-              child: Image.asset(
-                urlStringImage,
-                height: 50,
-                width: 50,
+            ),
+            Visibility(
+              visible: urlStringImage.isNotEmpty,
+              child: Container(
+                padding: const EdgeInsets.symmetric(horizontal: 5, vertical: 5),
+                decoration: BoxDecoration(
+                  color: const Color(0xffF4F4F5),
+                  borderRadius: BorderRadius.circular(18),
+                  border: isSelected
+                      ? Border.all(color: const Color(0xff4059E6), width: 1)
+                      : Border.all(color: Colors.transparent, width: 1),
+                ),
+                child: Image.network(
+                  urlStringImage,
+                  height: 50,
+                  width: 50,
+                ),
               ),
             ),
             Padding(

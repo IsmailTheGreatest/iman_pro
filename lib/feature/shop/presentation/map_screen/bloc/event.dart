@@ -2,37 +2,29 @@ import 'package:equatable/equatable.dart';
 import 'package:flutter/material.dart';
 import 'package:yandex_mapkit/yandex_mapkit.dart';
 
+import '../../../data/models/merchant.dart';
+
 class MapEvent extends Equatable {
   @override
   List<Object> get props => [];
 }
 
-class InitializePlacemarks extends MapEvent {
-  final List<PlacemarkMapObject> placemarks;
+class SelectMerchant extends MapEvent {
+  final Merchant merchant;
 
-  InitializePlacemarks(this.placemarks);
-
-  @override
-  List<Object> get props => [placemarks];
-}
-
-class ToggleOverlayVisibility extends MapEvent {}
-
-class UpdatePlacemarkIcon extends MapEvent {
-  final String mapObjectId;
-  final String newIconPath;
-
-  UpdatePlacemarkIcon(this.mapObjectId, this.newIconPath);
+  SelectMerchant(this.merchant);
 
   @override
-  List<Object> get props => [mapObjectId, newIconPath];
+  List<Object> get props => [merchant];
 }
+
 class GoToUserLocation extends MapEvent {}
 
 class InitializeMap extends MapEvent {
+  final YandexMapController controller;
   final BuildContext context;
 
-  InitializeMap(this.context);
+  InitializeMap(this.context, this.controller);
 
   @override
   List<Object> get props => [context];

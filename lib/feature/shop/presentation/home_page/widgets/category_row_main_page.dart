@@ -1,35 +1,62 @@
 import 'package:flutter/material.dart';
+import 'package:flutter_bloc/flutter_bloc.dart';
+import 'package:iman_invest/feature/shop/presentation/home_page/bloc/homepage_bloc.dart';
 
-
-import '../../../domain/entities/category.dart';
-import '../../../hardcoded_resources/categories_repository.dart';
+import '../bloc/event.dart';
+import '../bloc/state.dart';
 import 'category_container_for_main_page.dart';
-
-
+import 'category_container_shimmer.dart';
 
 class CategoryRow extends StatelessWidget {
   const CategoryRow({super.key});
 
   @override
   Widget build(BuildContext context) {
-    final List<Category> categories = CategoriesRepository().categories;
+    context.read<CategoriesBloc>().add(FetchCategories());
     return Column(
       crossAxisAlignment: CrossAxisAlignment.start,
       children: [
         SingleChildScrollView(
           scrollDirection: Axis.horizontal,
-          child: Row(
-            crossAxisAlignment: CrossAxisAlignment.start,
-            children: List.generate(categories.length, (index) {
-              final category = categories[index];
-              return CategoryContainer(
-                urlStringImage: category.urlStringImage,
-                title: category.title,
+          child: BlocBuilder<CategoriesBloc, CategoriesState>(
+              builder: (context, state) {
+            if (state is LoadingCategories) {
+              return Row(
+                crossAxisAlignment: CrossAxisAlignment.start,
+                children: List.generate(5, (index) {
+                  return const CategoryContainerShimmer();
+                }),
               );
-            }),
-          ),
+            }
+            if (state is ErrorCategories) {
+              return const SizedBox();
+            }
+            if (state is LoadedCategories) {
+              return Row(
+                crossAxisAlignment: CrossAxisAlignment.start,
+                children: [
+                  ConstrainedBox(
+                    constraints: const BoxConstraints(
+                      maxHeight: 116,
+                    ),
+                    child: ListView.builder(
+                        scrollDirection: Axis.horizontal,
+                        shrinkWrap: true,
+                        itemCount: state.categoriesList.length,
+                        itemBuilder: (context, index) {
+                          final category = state.categoriesList[index];
+                          return CategoryContainer(
+                            category: category,
+                            index: index,
+                          );
+                        }),
+                  ),
+                ],
+              );
+            }
+            return const SizedBox();
+          }),
         ),
-
       ],
     );
   }

@@ -1,4 +1,7 @@
 import 'package:flutter/material.dart';
+import 'package:flutter_bloc/flutter_bloc.dart';
+
+import '../cubit/search_category_cubit.dart';
 
 class SearchBarInSearchPage extends StatelessWidget {
   const SearchBarInSearchPage({
@@ -44,6 +47,9 @@ class SearchBarInSearchPage extends StatelessWidget {
                 valueListenable: controller,
                 builder: (context, value, __) {
                   return TextField(
+                    onChanged: (value) {
+                      context.read<SearchCubit>().search(value);
+                    },
                     focusNode: focusNode,
                     enabled: true,
                     controller: controller,
@@ -53,6 +59,7 @@ class SearchBarInSearchPage extends StatelessWidget {
                           ? GestureDetector(
                               onTap: () {
                                 controller.clear();
+                                context.read<SearchCubit>().search('');
                               },
                               child: Container(
                                 height: 25,
