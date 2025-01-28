@@ -28,9 +28,13 @@ class SearchCubit extends Cubit<SearchState> {
       }
       emit(SearchLoading());
       final userLocation = await appLocation.getCurrentLocation();
-      final searchResults =
-          await searchByNameUseCase(SearchParams(query, _selectedCategory, userLocation));
-      emit(SearchLoaded(searchResults: searchResults));
+      final data = await searchByNameUseCase(
+          SearchParams(query, _selectedCategory, userLocation));
+      data.fold((failure) {
+        emit(SearchError(failure.message));
+      }, (searchResults) {
+        emit(SearchLoaded(searchResults: searchResults));
+      });
     });
   }
 
@@ -45,7 +49,6 @@ class CategoriesCubit extends Cubit<CategoryState> {
   final GetCategoriesUseCase getCategoriesUseCase;
   int? _previousCategory;
 
-
   CategoriesCubit({required this.getCategoriesUseCase})
       : super(InitialCategories());
 
@@ -53,8 +56,9 @@ class CategoriesCubit extends Cubit<CategoryState> {
     emit(LoadingCategories());
 
     try {
-      final categoriesList = await getCategoriesUseCase.call(NoParams());
-      emit(LoadedCategories(categoriesList, null));
+      final result = await getCategoriesUseCase.call(NoParams());
+      result.fold((l) => emit(ErrorCategories(l.toString())),
+          (categoriesList) => emit(LoadedCategories(categoriesList, null)));
     } catch (e) {
       emit(ErrorCategories(e.toString()));
     }

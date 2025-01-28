@@ -17,9 +17,8 @@ class MerchantBloc extends Bloc<MerchantEvent, MerchantState> {
       try {
         final userLocation = await appLocation.getCurrentLocation();
 
-        final merchantsList = await getClosestPartnersUseCase.call(userLocation);
-
-        emit(LoadedClosestMerchants(merchantsList));
+        final result = await getClosestPartnersUseCase.call(userLocation);
+        result.fold((l) => emit(ErrorMerchants(l.toString())), (r) => emit(LoadedClosestMerchants(r)));
 
       } catch (e) {
         emit(ErrorMerchants(e.toString()));
@@ -37,8 +36,8 @@ class SmallMerchantsBloc extends Bloc<MerchantEvent, SmallMerchantState> {
       try {
         final userLocation = await LocationService().getCurrentLocation();
 
-        final merchantsList = await getPartnersUseCase.call(userLocation);
-        emit(LoadedSmallMerchants(merchantsList));
+        final result = await getPartnersUseCase.call(userLocation);
+        result.fold((l) => emit(ErrorSmallMerchants(l.toString())), (r) => emit(LoadedSmallMerchants(r)));
       } catch (e) {
         emit(ErrorSmallMerchants(e.toString()));
       }

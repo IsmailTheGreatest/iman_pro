@@ -5,39 +5,38 @@ import 'package:iman_invest/feature/shop/presentation/home_page/bloc/state.dart'
 import '../../../domain/usecases/get_categories_usecase.dart';
 import 'event.dart';
 
-
 class HomePageBloc extends Bloc<BannerEvent, AddBannerState> {
   final GetBannerImages getBannerImages;
   final GetCategoriesUseCase getCategoriesUseCase;
-  HomePageBloc( {required this.getBannerImages, required this.getCategoriesUseCase}) : super(Initial()){
 
+  HomePageBloc(
+      {required this.getBannerImages, required this.getCategoriesUseCase})
+      : super(Initial()) {
     on<FetchBannerImages>((event, emit) async {
-
       emit(LoadingAd());
       try {
-        final bannerImagesList = await getBannerImages.call(NoParams());
-        emit(LoadedAd(bannerImagesList));
+        final result = await getBannerImages.call(NoParams());
+        result.fold((l) => emit(Error(l.message)), (r) => emit(LoadedAd(r)));
       } catch (e) {
         emit(Error(e.toString()));
       }
     });
   }
-
 }
+
 class CategoriesBloc extends Bloc<CategoriesEvent, CategoriesState> {
-
   final GetCategoriesUseCase getCategoriesUseCase;
-  CategoriesBloc({required this.getCategoriesUseCase}) : super(InitialCategories()){
 
+  CategoriesBloc({required this.getCategoriesUseCase})
+      : super(InitialCategories()) {
     on<FetchCategories>((event, emit) async {
       emit(LoadingCategories());
 
       try {
-        final categoriesList = await getCategoriesUseCase.call(NoParams());
-        emit(LoadedCategories(categoriesList));
-
+        final result = await getCategoriesUseCase.call(NoParams());
+        result.fold((l) => emit(ErrorCategories(l.message)),
+            (categoriesList) => emit(LoadedCategories(categoriesList)));
       } catch (e) {
-
         emit(ErrorCategories(e.toString()));
       }
     });

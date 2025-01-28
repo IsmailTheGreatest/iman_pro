@@ -13,6 +13,12 @@ abstract class SearchState extends Equatable{
 
 class SearchInitial extends SearchState {}
 class SearchLoading extends SearchState {}
+class SearchError extends SearchState {
+  final String message;
+  SearchError(this.message);
+  @override
+  List<Object?> get props => [message];
+}
 class SearchLoaded extends SearchState {
 
   final List<Merchant> searchResults;

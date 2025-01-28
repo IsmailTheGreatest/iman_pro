@@ -42,7 +42,7 @@ class AdBannerRow extends StatelessWidget {
           }).toList(),
         );
       } else if (state is Error) {
-        return const Center(child: Text('Connect to Internet.Pull to refresh'));
+        return  Center(child: Text(state.message));
       }
       return const SizedBox();
     });
