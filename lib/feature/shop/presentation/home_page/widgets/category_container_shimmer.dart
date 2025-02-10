@@ -1,15 +1,16 @@
 import 'package:flutter/material.dart';
 import 'package:shimmer/shimmer.dart';
 
+///
 class CategoryContainerShimmer extends StatelessWidget {
+  ///
   const CategoryContainerShimmer({super.key});
 
   @override
   Widget build(BuildContext context) {
     return Padding(
-      padding: const EdgeInsets.all(0.0),
+     padding: EdgeInsets.zero,
       child: Column(
-        crossAxisAlignment: CrossAxisAlignment.center,
         children: [
           Container(
             padding: const EdgeInsets.symmetric(horizontal: 5, vertical: 5),
@@ -28,7 +29,7 @@ class CategoryContainerShimmer extends StatelessWidget {
             ),
           ),
           Padding(
-            padding: const EdgeInsets.symmetric(vertical: 10, horizontal: 0),
+            padding: const EdgeInsets.symmetric(vertical: 10),
             child: SizedBox(
               width: 80,
               child: Shimmer.fromColors(

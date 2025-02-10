@@ -1,16 +1,15 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
-
-import '../cubit/search_category_cubit.dart';
-
+import 'package:iman_invest/feature/shop/presentation/search_page/cubit/search_category_cubit.dart';
+/// SearchBarInSearchPage class
 class SearchBarInSearchPage extends StatelessWidget {
+  /// SearchBarInSearchPage constructor
   const SearchBarInSearchPage({
-    super.key,
-    required this.controller,
-    required this.focusNode,
+    required this.controller, required this.focusNode, super.key,
   });
-
+/// SearchBarInSearchPage constructor
   final TextEditingController controller;
+  /// SearchBarInSearchPage constructor
   final FocusNode focusNode;
 
   @override

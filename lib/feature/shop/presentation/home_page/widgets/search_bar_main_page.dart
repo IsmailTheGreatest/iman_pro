@@ -1,10 +1,11 @@
 import 'package:flutter/material.dart';
 
-import '../../../../../core/utils/navigate_without_transition.dart';
-import '../../search_page/search_page.dart';
-
+import 'package:iman_invest/core/utils/navigate_without_transition.dart';
+import 'package:iman_invest/feature/shop/presentation/search_page/search_page.dart';
+///
 class SearchBarHomePage extends StatelessWidget {
 
+  ///
   const SearchBarHomePage({
     super.key,
   });

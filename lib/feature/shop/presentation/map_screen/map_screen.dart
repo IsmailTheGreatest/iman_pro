@@ -2,21 +2,24 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:iman_invest/feature/shop/data/models/merchant.dart';
+import 'package:iman_invest/feature/shop/presentation/map_screen/bloc/event.dart';
+import 'package:iman_invest/feature/shop/presentation/map_screen/bloc/map_bloc.dart';
+import 'package:iman_invest/feature/shop/presentation/map_screen/bloc/state.dart';
+import 'package:iman_invest/feature/shop/presentation/map_screen/widgets/buttons/back_button.dart'
+    as back_button;
 import 'package:iman_invest/feature/shop/presentation/map_screen/widgets/buttons/current_location_button.dart';
 import 'package:iman_invest/feature/shop/presentation/map_screen/widgets/buttons/tune_button.dart';
 import 'package:iman_invest/feature/shop/presentation/map_screen/widgets/locations_row/locations_view.dart';
+import 'package:iman_invest/feature/shop/services/map_service.dart';
 import 'package:yandex_mapkit/yandex_mapkit.dart';
-import 'package:iman_invest/feature/shop/presentation/map_screen/widgets/buttons/back_button.dart'
-    as back_button;
-import '../../services/map_service.dart';
-import 'bloc/event.dart';
-import 'bloc/map_bloc.dart';
-import 'bloc/state.dart';
 
+/// MapScreen class
 class MapScreen extends StatelessWidget {
-  final List<Merchant> merchants;
+  /// MapScreen constructor
+  const MapScreen({required this.merchants, super.key});
 
-  const MapScreen({super.key, required this.merchants});
+  /// MapScreen constructor
+  final List<Merchant> merchants;
 
   @override
   Widget build(BuildContext context) {
@@ -27,10 +30,13 @@ class MapScreen extends StatelessWidget {
   }
 }
 
+/// MapView class
 class MapView extends StatelessWidget {
-  final List<Merchant> merchants;
+  /// MapView constructor
+  const MapView({required this.merchants, super.key});
 
-  const MapView({super.key, required this.merchants});
+  /// MapView constructor
+  final List<Merchant> merchants;
 
   @override
   Widget build(BuildContext context) {
@@ -42,21 +48,20 @@ class MapView extends StatelessWidget {
             body: Stack(
               children: [
                 BlocBuilder<MapBloc, MapState>(
-                  builder: (context,state) {
+                  builder: (context, state) {
                     return YandexMap(
                       logoAlignment: const MapAlignment(
-                          horizontal: HorizontalAlignment.left,
-                          vertical: VerticalAlignment.top),
-                      mapType: MapType.vector,
+                        horizontal: HorizontalAlignment.left,
+                        vertical: VerticalAlignment.top,
+                      ),
                       mapObjects: state.placemarks,
                       onMapCreated: (controller) async {
-
                         context
                             .read<MapBloc>()
                             .add(InitializeMap(context, controller));
                       },
                     );
-                  }
+                  },
                 ),
                 back_button.BackButton(
                   onTap: () {

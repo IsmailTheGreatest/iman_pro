@@ -1,30 +1,30 @@
-import '../../../../core/exceptions/failures.dart';
-import '../../../../core/usecase/usecase.dart';
-import '../../data/models/category.dart';
-import '../../data/repository/shop_repository_implementation.dart';
-import '../repository/shop_repository.dart';
 import 'package:dartz/dartz.dart';
+import 'package:iman_invest/core/exceptions/failures.dart';
+import 'package:iman_invest/core/usecase/usecase.dart';
+import 'package:iman_invest/feature/shop/data/models/category.dart';
+import 'package:iman_invest/feature/shop/data/repository/shop_repository_implementation.dart';
+import 'package:iman_invest/feature/shop/domain/repository/shop_repository.dart';
 
-
-class GetCategoriesUseCase extends UseCase<Either<Failure,List<Category>>, NoParams> {
+/// GetCategoriesUseCase class
+class GetCategoriesUseCase
+    with UseCase<Either<Failure, List<Category>>, NoParams> {
   final ShopRepository _shopRepository = ShopRepositoryImplementation();
 
   @override
-  Future<Either<Failure,List<Category>>> call(NoParams params) async {
-    var data = await _shopRepository.getCategories();
-    final Either<Failure,List<Category>> result = data.fold((failure) {
+  Future<Either<Failure, List<Category>>> call(NoParams params) async {
+    final data = await _shopRepository.getCategories();
+    final result = data.fold<Either<Failure, List<Category>>>((failure) {
       return Left(failure);
     }, (categories) {
-      Category? temp;
-      for (var category in categories) {
+      for (final category in categories) {
         if (category.banner == '') {
-          temp = category;
-          categories.remove(category);
-          categories.add(temp);
+          categories
+            ..remove(category)
+            ..add(category);
         }
       }
       return Right(categories);
     });
-  return result;
+    return result;
   }
 }

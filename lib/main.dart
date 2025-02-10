@@ -1,13 +1,19 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_dotenv/flutter_dotenv.dart';
-import 'feature/shop/presentation/home_page/home_page.dart';
+import 'package:iman_invest/feature/shop/presentation/home_page/home_page.dart';
+
 
 Future<void> main() async {
-  await dotenv.load(fileName: ".env");
+  WidgetsFlutterBinding.ensureInitialized();
+
+
+
+  await dotenv.load();
   runApp(const MainPage());
 }
-
+/// MainPage class
 class MainPage extends StatelessWidget {
+  /// MainPage constructor
   const MainPage({super.key});
 
   @override

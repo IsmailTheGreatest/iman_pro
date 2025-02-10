@@ -1,12 +1,15 @@
 import 'package:flutter/material.dart';
 
-import '../../../data/models/merchant.dart';
-import '../../map_screen/map_screen.dart';
+import 'package:iman_invest/feature/shop/data/models/merchant.dart';
+import 'package:iman_invest/feature/shop/presentation/map_screen/map_screen.dart';
 
+/// ListOfStoreItem class
 class ListOfStoreItem extends StatelessWidget {
-  final Merchant merchant;
+  /// ListOfStoreItem constructor
+  const ListOfStoreItem({required this.merchant, super.key});
 
-  const ListOfStoreItem({super.key, required this.merchant});
+  /// ListOfStoreItem constructor
+  final Merchant merchant;
 
   @override
   Widget build(BuildContext context) {
@@ -16,8 +19,10 @@ class ListOfStoreItem extends StatelessWidget {
         onTap: () {
           Navigator.push(
               context,
-              MaterialPageRoute(
-                builder: (context) => MapScreen(merchants: [merchant]),));},
+              MaterialPageRoute<MapScreen>(
+                builder: (context) => MapScreen(merchants: [merchant]),
+              ),);
+        },
         child: Row(
           children: [
             if (merchant.logo.isNotEmpty)
@@ -38,7 +43,10 @@ class ListOfStoreItem extends StatelessWidget {
               child: Text(
                 merchant.name,
                 overflow: TextOverflow.ellipsis,
-                style: const TextStyle(fontSize: 18, fontWeight: FontWeight.bold),
+                style: const TextStyle(
+                  fontSize: 18,
+                  fontWeight: FontWeight.bold,
+                ),
               ),
             ),
             const Spacer(),

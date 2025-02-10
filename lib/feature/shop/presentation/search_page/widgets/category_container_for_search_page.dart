@@ -1,26 +1,35 @@
 import 'package:flutter/material.dart';
 
+/// CategoryContainer class
 class CategoryContainer extends StatelessWidget {
-  final String urlStringImage;
-  final String title;
-  final bool isSelected;
-  final VoidCallback onTap;
+  /// CategoryContainer constructor
+  const CategoryContainer({
+    required this.urlStringImage,
+    required this.title,
+    required this.isSelected,
+    required this.onTap,
+    super.key,
+  });
 
-  const CategoryContainer(
-      {super.key,
-      required this.urlStringImage,
-      required this.title,
-      required this.isSelected,
-      required this.onTap});
+  /// CategoryContainer constructor
+  final String urlStringImage;
+
+  /// CategoryContainer constructor
+  final String title;
+
+  /// CategoryContainer constructor
+  final bool isSelected;
+
+  /// CategoryContainer constructor
+  final VoidCallback onTap;
 
   @override
   Widget build(BuildContext context) {
     return Padding(
-      padding: const EdgeInsets.all(0.0),
+      padding: EdgeInsets.zero,
       child: GestureDetector(
         onTap: onTap,
         child: Column(
-          crossAxisAlignment: CrossAxisAlignment.center,
           children: [
             Visibility(
               visible: urlStringImage.isEmpty,
@@ -30,10 +39,14 @@ class CategoryContainer extends StatelessWidget {
                   color: const Color(0xffF4F4F5),
                   borderRadius: BorderRadius.circular(18),
                   border: isSelected
-                      ? Border.all(color: const Color(0xff4059E6), width: 1)
-                      : Border.all(color: Colors.transparent, width: 1),
+                      ? Border.all(
+                          color: const Color(0xff4059E6),
+                        )
+                      : Border.all(
+                          color: Colors.transparent,
+                        ),
                 ),
-                child: const  Icon(
+                child: const Icon(
                   Icons.store,
                   size: 50,
                   color: Colors.black,
@@ -48,8 +61,8 @@ class CategoryContainer extends StatelessWidget {
                   color: const Color(0xffF4F4F5),
                   borderRadius: BorderRadius.circular(18),
                   border: isSelected
-                      ? Border.all(color: const Color(0xff4059E6), width: 1)
-                      : Border.all(color: Colors.transparent, width: 1),
+                      ? Border.all(color: const Color(0xff4059E6))
+                      : Border.all(color: Colors.transparent),
                 ),
                 child: Image.network(
                   urlStringImage,
@@ -59,20 +72,24 @@ class CategoryContainer extends StatelessWidget {
               ),
             ),
             Padding(
-              padding: const EdgeInsets.symmetric(vertical: 10, horizontal: 0),
+              padding: const EdgeInsets.symmetric(
+                vertical: 10,
+              ),
               child: SizedBox(
-                  width: 80,
-                  child: Text(
-                    title,
-                    textAlign: TextAlign.center,
-                    softWrap: true,
-                    style: TextStyle(
-                        fontSize: 12,
-                        fontWeight: FontWeight.bold,
-                        color: isSelected
-                            ? const Color(0xff4059E6)
-                            : const Color(0xff040415)),
-                  )),
+                width: 80,
+                child: Text(
+                  title,
+                  textAlign: TextAlign.center,
+                  softWrap: true,
+                  style: TextStyle(
+                    fontSize: 12,
+                    fontWeight: FontWeight.bold,
+                    color: isSelected
+                        ? const Color(0xff4059E6)
+                        : const Color(0xff040415),
+                  ),
+                ),
+              ),
             ),
           ],
         ),

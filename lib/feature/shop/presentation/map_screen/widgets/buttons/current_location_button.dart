@@ -2,11 +2,13 @@ import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 
 
-import '../../bloc/event.dart';
-import '../../bloc/map_bloc.dart';
+import 'package:iman_invest/feature/shop/presentation/map_screen/bloc/event.dart';
+import 'package:iman_invest/feature/shop/presentation/map_screen/bloc/map_bloc.dart';
 
 
+///
 class CurrentLocationButton extends StatelessWidget {
+  ///
   const CurrentLocationButton({
     super.key,
   });

@@ -1,6 +1,7 @@
 import 'package:flutter_dotenv/flutter_dotenv.dart';
-
+///
 class ApiClass {
+  ///
   static String get baseUrl {
     final url = dotenv.env['BASE_URL'];
     if (url != null) {
@@ -10,6 +11,7 @@ class ApiClass {
     }
   }
 
+  ///
   static String get apiKey {
     final url = dotenv.env['API_KEY'];
     if (url != null) {
@@ -19,8 +21,11 @@ class ApiClass {
     }
   }
 
+  ///
   static const String getBannerEndpoint = '/v1/content/banners';
+  ///
   static const String getCategoriesEndpoint = '/v1/categories';
+  ///
   static const String getBranchesEndpoint = '/v1/merchants/branches';
 
 

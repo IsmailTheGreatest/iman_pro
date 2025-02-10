@@ -1,18 +1,22 @@
 import 'package:flutter/material.dart';
 
+import 'package:iman_invest/feature/shop/data/models/merchant.dart';
+import 'package:iman_invest/feature/shop/presentation/map_screen/widgets/view_location/view_location.dart';
 
-
-import '../../../../data/models/merchant.dart';
-import '../view_location/view_location.dart';
+///
 class LocationsRow extends StatelessWidget {
-  final List<Merchant> merchants;
-   const LocationsRow({
-    super.key, required this.merchants,
+  ///
+  const LocationsRow({
+    required this.merchants,
+    super.key,
   });
+
+  ///
+  final List<Merchant> merchants;
 
   @override
   Widget build(BuildContext context) {
-    return  Positioned(
+    return Positioned(
       bottom: 10,
       left: 0,
       right: 0,
@@ -25,14 +29,13 @@ class LocationsRow extends StatelessWidget {
           child: ListView.builder(
             shrinkWrap: true,
             scrollDirection: Axis.horizontal,
-            itemCount:merchants.length,
-            itemBuilder: (context,index)=>ViewLocation(
+            itemCount: merchants.length,
+            itemBuilder: (context, index) => ViewLocation(
               merchant: merchants[index],
             ),
           ),
-        )
         ),
+      ),
     );
-
   }
 }

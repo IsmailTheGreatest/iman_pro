@@ -1,5 +1,7 @@
 import 'package:flutter/material.dart';
+///
 class TuneButton extends StatelessWidget {
+  ///
   const TuneButton({
     super.key,
   });
@@ -18,7 +20,7 @@ class TuneButton extends StatelessWidget {
               color: Colors.white,
               boxShadow: [
                 BoxShadow(
-                  color: const Color(0xff040415).withOpacity(0.1),
+                  color: const Color(0xff040415).withValues(alpha: 0.1),
                   blurRadius: 15,
                   offset: const Offset(0, 3),
                 ),
@@ -26,6 +28,6 @@ class TuneButton extends StatelessWidget {
             ),
             child: const Icon(Icons.tune),
           ),
-        ));
+        ),);
   }
 }

@@ -1,10 +1,6 @@
+/// Merchant Model
 class Merchant {
-  final String guid;
-  final String name;
-  final String logo;
-  final String phoneNumber;
-  final AddressModel address;
-
+/// Merchant Model constructor
   Merchant({
     required this.guid,
     required this.name,
@@ -12,17 +8,27 @@ class Merchant {
     required this.phoneNumber,
     required this.address,
   });
-
+/// Merchant Model named constructor
   factory Merchant.fromJson(Map<String, dynamic> json) {
     return Merchant(
-      guid: json['guid'],
-      name: json['name'],
-      logo: json['logo'],
-      phoneNumber: json['phone_number'],
-      address: AddressModel.fromJson(json['address']),
+      guid: json['guid'].toString(),
+      name: json['name'].toString(),
+      logo: json['logo'].toString(),
+      phoneNumber: json['phone_number'].toString(),
+      address: AddressModel.fromJson(json['address']! as Map<String, dynamic>),
     );
   }
-
+  /// Merchant Guid
+  final String guid;
+  /// Merchant Name
+  final String name;
+  /// Merchant Logo
+  final String logo;
+  /// Merchant Phone Number
+  final String phoneNumber;
+  /// Merchant Address
+  final AddressModel address;
+/// Merchant Model toJson method
   Map<String, dynamic> toJson() {
     return {
       'guid': guid,
@@ -33,16 +39,9 @@ class Merchant {
     };
   }
 }
-
+/// Address Model
 class AddressModel {
-  final String guid;
-  final String city;
-  final String district;
-  final String address;
-  final double latitude;
-  final double longitude;
-   double distance;
-
+/// Address Model constructor
   AddressModel({
     required this.guid,
     required this.city,
@@ -52,19 +51,33 @@ class AddressModel {
     required this.longitude,
     required this.distance,
   });
-
+/// Address Model named constructor
   factory AddressModel.fromJson(Map<String, dynamic> json) {
     return AddressModel(
-      guid: json['guid'],
-      city: json['city'],
-      district: json['district'],
-      address: json['address'],
-      latitude: (json['latitude'] as num).toDouble(),
-      longitude: (json['longitude'] as num).toDouble(),
-      distance: (json['distance'] as num).toDouble(),
+      guid: json['guid'].toString(),
+      city: json['city'].toString(),
+      district: json['district'].toString(),
+      address: json['address'].toString(),
+      latitude: (json['latitude']! as num).toDouble(),
+      longitude: (json['longitude']! as num).toDouble(),
+      distance: (json['distance']! as num).toDouble(),
     );
   }
-
+  /// Address Guid
+  final String guid;
+  /// Address City
+  final String city;
+  /// Address District
+  final String district;
+  /// Address Address
+  final String address;
+  /// Address Latitude
+  final double latitude;
+  /// Address Longitude
+  final double longitude;
+  /// Address Distance
+   double distance;
+/// Address Model toJson method
   Map<String, dynamic> toJson() {
     return {
       'guid': guid,

@@ -1,31 +1,36 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
+import 'package:iman_invest/core/widgets/headers/header.dart';
+import 'package:iman_invest/feature/shop/domain/usecases/get_banner_images_usecase.dart';
+import 'package:iman_invest/feature/shop/domain/usecases/get_categories_usecase.dart';
+import 'package:iman_invest/feature/shop/domain/usecases/get_partners_usecase.dart';
+import 'package:iman_invest/feature/shop/domain/usecases/get_sorted_partners_usecase.dart';
 import 'package:iman_invest/feature/shop/presentation/home_page/bloc/event.dart';
+import 'package:iman_invest/feature/shop/presentation/home_page/bloc/homepage_bloc.dart';
+import 'package:iman_invest/feature/shop/presentation/home_page/bloc/merchants/merchant_bloc.dart'
+    show MerchantBloc, SmallMerchantsBloc;
+import 'package:iman_invest/feature/shop/presentation/home_page/bloc/merchants/merchant_event.dart';
 import 'package:iman_invest/feature/shop/presentation/home_page/widgets/banner_row/add_banner_row.dart';
 import 'package:iman_invest/feature/shop/presentation/home_page/widgets/banner_row/partners_row.dart';
 import 'package:iman_invest/feature/shop/presentation/home_page/widgets/banner_row/small_partners_row.dart';
 import 'package:iman_invest/feature/shop/presentation/home_page/widgets/category_row_main_page.dart';
-import 'package:iman_invest/feature/shop/presentation/home_page/bloc/merchants/merchant_bloc.dart';
+import 'package:iman_invest/feature/shop/presentation/home_page/widgets/search_bar_main_page.dart';
 import 'package:iman_invest/feature/shop/presentation/home_page/widgets/top_row_home_page.dart';
-import '../../../../core/widgets/headers/header.dart';
-import '../../domain/usecases/get_banner_images_usecase.dart';
-import '../../domain/usecases/get_categories_usecase.dart';
-import '../../domain/usecases/get_partners_usecase.dart';
-import '../../domain/usecases/get_sorted_partners_usecase.dart';
-import 'bloc/homepage_bloc.dart';
-import 'bloc/merchants/merchant_event.dart';
-import 'widgets/search_bar_main_page.dart';
 
+/// HomePage class
 class HomePage extends StatelessWidget {
+  /// HomePage constructor
   const HomePage({super.key});
 
   @override
   Widget build(BuildContext context) {
     return MultiBlocProvider(
       providers: [
-        BlocProvider<CategoriesBloc>(create: (BuildContext context) {
-          return CategoriesBloc(getCategoriesUseCase: GetCategoriesUseCase());
-        }),
+        BlocProvider<CategoriesBloc>(
+          create: (BuildContext context) {
+            return CategoriesBloc(getCategoriesUseCase: GetCategoriesUseCase());
+          },
+        ),
         BlocProvider(
           create: (BuildContext context) {
             return HomePageBloc(
@@ -34,18 +39,20 @@ class HomePage extends StatelessWidget {
             );
           },
         ),
-        BlocProvider(create: (BuildContext context) {
-          return SmallMerchantsBloc(
-            getPartnersUseCase: GetPartnersUseCase(),
-          );
-        }),
+        BlocProvider(
+          create: (BuildContext context) {
+            return SmallMerchantsBloc(
+              getPartnersUseCase: GetPartnersUseCase(),
+            );
+          },
+        ),
         BlocProvider(
           create: (BuildContext context) {
             return MerchantBloc(
               getClosestPartnersUseCase: GetClosestPartnersUseCase(),
             );
           },
-        )
+        ),
       ],
       child: Scaffold(
         backgroundColor: Colors.white,
@@ -63,10 +70,9 @@ class HomePage extends StatelessWidget {
               child: const SingleChildScrollView(
                   physics: AlwaysScrollableScrollPhysics(),
                   child: Column(
-                    mainAxisAlignment: MainAxisAlignment.start,
                     crossAxisAlignment: CrossAxisAlignment.start,
                     children: [
-                      //magazini and location icon
+                      //magazine and location icon
                       TopRowHomePage(),
                       SearchBarHomePage(),
                       SizedBox(
@@ -78,19 +84,21 @@ class HomePage extends StatelessWidget {
                       ),
                       CategoryRow(),
                       Header(
-                        title: "Поблизости",
+                        title: 'Поблизости',
                         size: 24,
                       ),
                       PartnersRow(),
                       Header(
-                        title: "Вам может понравится",
+                        title: 'Вам может понравится',
                         size: 24,
                       ),
                       SmallPartnersRow(),
                     ],
-                  )),
+                  ),
+              ),
             );
-          }),
+          },
+          ),
         ),
       ),
     );

@@ -1,16 +1,23 @@
 import 'package:flutter/material.dart';
 
+///
 class SmallContainer extends StatelessWidget {
+  ///
   const SmallContainer({
-    super.key,
     required this.text,
     required this.icon,
-    required this.onTap, required this.isKm,
+    required this.onTap,
+    required this.isKm,
+    super.key,
   });
 
+  ///
   final String text;
+  ///
   final bool isKm;
+  ///
   final IconData icon;
+  ///
   final VoidCallback onTap;
 
   @override
@@ -38,15 +45,14 @@ class SmallContainer extends StatelessWidget {
               ),
             ),
           ),
-           Text(
-              isKm ? 'км' : 'мин',
-              overflow: TextOverflow.ellipsis,
-              style: const TextStyle(
-                fontSize: 13,
-                color: Colors.black,
-              ),
-            )
-           ,
+          Text(
+            isKm ? 'км' : 'мин',
+            overflow: TextOverflow.ellipsis,
+            style: const TextStyle(
+              fontSize: 13,
+              color: Colors.black,
+            ),
+          ),
         ],
       ),
     );

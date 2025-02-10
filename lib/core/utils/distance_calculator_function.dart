@@ -1,9 +1,8 @@
-
 // Method to calculate the distance between two lat-long points
 import 'dart:math';
 
-import '../../feature/shop/data/models/merchant.dart';
-import '../../feature/shop/data/models/app_lat_long.dart';
+import 'package:iman_invest/feature/shop/data/models/app_lat_long.dart';
+import 'package:iman_invest/feature/shop/data/models/merchant.dart';
 
 double _calculateDistance(AppLatLong from, AppLatLong to) {
   const earthRadius = 6371.0; // Radius of the Earth in kilometers
@@ -25,10 +24,13 @@ double _degreesToRadians(double degrees) {
   return degrees * pi / 180;
 }
 
-// Method to sort merchants by distance and update the distance field
+/// Method to sort merchants by distance and update the distance field
 List<Merchant> sortMerchantsByDistance(
-    AppLatLong userLocation, List<Merchant> merchants,{bool? doNotSort}) {
-  for (var merchant in merchants) {
+  AppLatLong userLocation,
+  List<Merchant> merchants, {
+  bool? doNotSort,
+}) {
+  for (final merchant in merchants) {
     // Update the distance field for each merchant
     merchant.address.distance = _calculateDistance(
       userLocation,
@@ -40,12 +42,9 @@ List<Merchant> sortMerchantsByDistance(
   }
 
   // Sort merchants by the updated distance field
-  if (doNotSort == true) {
-    return merchants;
-  }
-
+  if (doNotSort != true) {
     merchants.sort((a, b) => a.address.distance.compareTo(b.address.distance));
-
-    return merchants;
   }
 
+  return merchants;
+}

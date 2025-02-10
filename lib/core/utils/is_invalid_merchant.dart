@@ -1,5 +1,5 @@
-import '../../feature/shop/data/models/merchant.dart';
-
+import 'package:iman_invest/feature/shop/data/models/merchant.dart';
+///
 bool isInvalidMerchant(Merchant merchant) {
   return merchant.address.latitude == 0 ||
       merchant.address.longitude == 0 ||

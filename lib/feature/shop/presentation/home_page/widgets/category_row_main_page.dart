@@ -1,13 +1,14 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
+import 'package:iman_invest/feature/shop/presentation/home_page/bloc/event.dart';
 import 'package:iman_invest/feature/shop/presentation/home_page/bloc/homepage_bloc.dart';
+import 'package:iman_invest/feature/shop/presentation/home_page/bloc/state.dart';
+import 'package:iman_invest/feature/shop/presentation/home_page/widgets/category_container_for_main_page.dart';
+import 'package:iman_invest/feature/shop/presentation/home_page/widgets/category_container_shimmer.dart';
 
-import '../bloc/event.dart';
-import '../bloc/state.dart';
-import 'category_container_for_main_page.dart';
-import 'category_container_shimmer.dart';
-
+///
 class CategoryRow extends StatelessWidget {
+  ///
   const CategoryRow({super.key});
 
   @override
@@ -49,13 +50,13 @@ class CategoryRow extends StatelessWidget {
                             category: category,
                             index: index,
                           );
-                        }),
+                        },),
                   ),
                 ],
               );
             }
             return const SizedBox();
-          }),
+          },),
         ),
       ],
     );

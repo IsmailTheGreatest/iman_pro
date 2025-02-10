@@ -1,17 +1,31 @@
 import 'package:flutter/material.dart';
-class PartnersBanner extends StatelessWidget {
-  final String imageUrl;
-  final String title;
-  final double distance;
-  final String? storeIconImgUrl;
-  final VoidCallback onTap;
 
-  const PartnersBanner(
-      {super.key,
-        required this.imageUrl,
-        required this.title,
-        required this.distance,
-        this.storeIconImgUrl, required this.onTap});
+///
+class PartnersBanner extends StatelessWidget {
+  ///
+  const PartnersBanner({
+    required this.imageUrl,
+    required this.title,
+    required this.distance,
+    required this.onTap,
+    super.key,
+    this.storeIconImgUrl,
+  });
+
+  ///
+  final String imageUrl;
+
+  ///
+  final String title;
+
+  ///
+  final double distance;
+
+  ///
+  final String? storeIconImgUrl;
+
+  ///
+  final VoidCallback onTap;
 
   @override
   Widget build(BuildContext context) {
@@ -26,31 +40,31 @@ class PartnersBanner extends StatelessWidget {
               Visibility(
                 visible: imageUrl.isEmpty,
                 child: Container(
-                  margin: const EdgeInsets.all( 8),
+                  margin: const EdgeInsets.all(8),
                   height: 175,
                   width: 300,
                   decoration: BoxDecoration(
                     borderRadius: BorderRadius.circular(20),
-                    color: const Color(0xff4059E6).withOpacity(0.1),
+                    color: const Color(0xff4059E6).withValues(alpha: 0.1),
                   ),
-                    child: const Center(
-                      child: Icon(
-                        Icons.store,
-                        color: Colors.black,
-                        size: 80,
-                      ),
+                  child: const Center(
+                    child: Icon(
+                      Icons.store,
+                      color: Colors.black,
+                      size: 80,
                     ),
+                  ),
                 ),
               ),
               Visibility(
                 visible: imageUrl.isNotEmpty,
                 child: Padding(
-                  padding: const EdgeInsets.all(8.0),
+                  padding: const EdgeInsets.all(8),
                   child: Container(
                     height: 175,
                     width: 300,
                     decoration: BoxDecoration(
-                      color:const Color(0xff4059E6).withOpacity(0.1),
+                      color: const Color(0xff4059E6).withValues(alpha: 0.1),
                       borderRadius: BorderRadius.circular(20),
                       image: DecorationImage(
                         image: NetworkImage(imageUrl),
@@ -60,11 +74,10 @@ class PartnersBanner extends StatelessWidget {
                   ),
                 ),
               ),
-
             ],
           ),
           Padding(
-            padding: const EdgeInsets.symmetric(horizontal: 12.0),
+            padding: const EdgeInsets.symmetric(horizontal: 12),
             child: Column(
               crossAxisAlignment: CrossAxisAlignment.start,
               children: [
@@ -73,15 +86,14 @@ class PartnersBanner extends StatelessWidget {
                   child: Text(
                     title,
                     style: const TextStyle(
-                        fontSize: 18,
-                        overflow: TextOverflow.ellipsis,
-                        fontWeight: FontWeight.bold,
-                        color: Color(0xff040415)),
+                      fontSize: 18,
+                      overflow: TextOverflow.ellipsis,
+                      fontWeight: FontWeight.bold,
+                      color: Color(0xff040415),
+                    ),
                   ),
                 ),
                 Row(
-                  crossAxisAlignment: CrossAxisAlignment.center,
-                  mainAxisAlignment: MainAxisAlignment.start,
                   children: [
                     Image.asset(
                       'assets/locationIcon.png',
@@ -95,9 +107,10 @@ class PartnersBanner extends StatelessWidget {
                       '${distance.toStringAsFixed(1)} км',
                       textAlign: TextAlign.center,
                       style: const TextStyle(
-                          fontSize: 14,
-                          fontWeight: FontWeight.bold,
-                          color: Color(0xff818188)),
+                        fontSize: 14,
+                        fontWeight: FontWeight.bold,
+                        color: Color(0xff818188),
+                      ),
                     ),
                   ],
                 ),

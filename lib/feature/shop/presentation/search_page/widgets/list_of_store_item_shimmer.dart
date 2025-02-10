@@ -1,7 +1,9 @@
 import 'package:flutter/material.dart';
 import 'package:shimmer/shimmer.dart';
 
+/// ListOfStoreItemShimmer class
 class ListOfStoreItemShimmer extends StatelessWidget {
+  /// ListOfStoreItemShimmer constructor
   const ListOfStoreItemShimmer({super.key});
 
   @override

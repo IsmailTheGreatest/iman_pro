@@ -1,7 +1,8 @@
 import 'package:flutter/material.dart';
 import 'package:shimmer/shimmer.dart';
-
+///
 class PartnersSmallBannerShimmer extends StatelessWidget {
+  ///
   const PartnersSmallBannerShimmer({super.key});
 
   @override

@@ -1,13 +1,8 @@
 import 'package:equatable/equatable.dart';
-
+///
 class Category extends Equatable {
-  final String guid;
-  final String slug;
-  final String title;
-  final String banner;
-  final String createdAt;
-  final String updatedAt;
 
+  ///
   const Category({
     required this.guid,
     required this.slug,
@@ -28,7 +23,21 @@ class Category extends Equatable {
       updatedAt: json['UpdatedAt'] as String? ??'',
     );
   }
+  ///
 
+  final String guid;
+  ///
+  final String slug;
+  ///
+  final String title;
+  ///
+  ///
+  final String banner;
+  ///
+  final String createdAt;
+  ///
+  final String updatedAt;
+///
   Map<String, dynamic> toJson() {
     return {
       'Guid': guid,
